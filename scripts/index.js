@@ -1,34 +1,42 @@
-let bagItems = [];
+let bagItems;
+
 onLoad();
 
-function onLoad ()
-{
+function onLoad() {
+    let bagItemsStr = localStorage.getItem('bagItems');
+    bagItems = bagItemsStr ? JSON.parse(bagItemsStr) : [];
     displayItemsOnHomePage();
-displayBagIcon() 
+    displayBagIcon();
 }
 
-function addToBag(itemId) { 
-   bagItems.push(itemId);
-   displayBagIcon();
+function addToBag(itemId) {
+    bagItems.push(itemId);
+    localStorage.setItem('bagItems', JSON.stringify(bagItems));
+    displayBagIcon();
 }
 
 function displayBagIcon() {
- let bagItemCountElement = document.querySelector('.bag-item-count');
- if (bagItems.length > 0) {
-    bagItemCountElement.style.visibility = 'visible';
- bagItemCountElement.innerText = bagItems.length; 
-} else { 
+    let bagItemCountElement = document.querySelector('.bag-item-count');
+    if (bagItems.length > 0) {
+        bagItemCountElement.style.visibility = 'visible';
+        bagItemCountElement.innerText = bagItems.length;
+    } else {
         bagItemCountElement.style.visibility = 'hidden';
+    }
 }
-}
+
 function displayItemsOnHomePage() {
     let itemsContainerElement = document.querySelector('.items-container');
+    console.log(itemsContainerElement);
+    if (!itemsContainerElement) { 
+            return;
+    }
     let innerHTML = '';
     items.forEach(item => {
         innerHTML += `<div class="item-container">
-       <img class="item-image" src="${item.image}" alt="Item Image">
-        <div class="rating">
-            ${item.rating.stars} ⭐ | ${item.rating.count}
+            <img class="item-image" src="${item.image}" alt="Item Image">
+            <div class="rating">
+                ${item.rating.stars} ⭐ | ${item.rating.count}
             </div>
             <div class="company-name">  ${item.company} </div>
             <div class="item-name"> ${item.item_name} </div>
@@ -37,8 +45,8 @@ function displayItemsOnHomePage() {
                 <span class="original-price"> ${item.original_price} </span>
                 <span class="discount">(${item.discount_percentage}% OFF)</span>
             </div>
-            <button class="btn-add-bag" onclick="addToBag(${item.id})">Add to Bag</button> <!-- corrected parenthesis -->
-            </div>`;
+            <button class="btn-add-bag" onclick="addToBag(${item.id})">Add to Bag</button>
+        </div>`;
     });
     itemsContainerElement.innerHTML = innerHTML;
 }
